@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Panel de gestión de micropréstamos quincenales">
+  <title>MicroPréstamos | Panel de gestión</title>
+  <style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap');
+:root{--ink:#17251e;--muted:#75847b;--green:#176b45;--green-light:#eaf5ee;--line:#e8eeea;--bg:#f5f7f5;--white:#fff;--red:#a83e35}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:'DM Sans',Arial,sans-serif}button,input,select,textarea{font:inherit}button{cursor:pointer}
+.app-shell{min-height:100vh;display:flex}.sidebar{width:238px;background:#14271f;color:#e8f1eb;padding:26px 15px;display:flex;flex-direction:column;flex-shrink:0}.brand{font-size:29px;font-weight:700;letter-spacing:-2px;margin:0 12px 38px}.brand>span{color:#69d5a0}.brand small{display:block;font-size:9px;letter-spacing:2px;color:#9bb0a4;margin-top:2px}
+.sidebar nav{display:grid;gap:6px}.nav-link{display:flex;align-items:center;gap:13px;padding:12px;color:#b8c9c0;background:transparent;border:0;border-radius:8px;text-align:left;font-size:14px}.nav-link:hover,.nav-link.active{background:#284438;color:white}.nav-link:first-letter{font-size:18px}.sidebar-foot{margin-top:auto;padding:15px 10px;color:#a8b9af;font-size:11px;line-height:1.7}.sidebar-foot span{color:#718a7c}
+.main-content{width:min(1500px,100%);padding:34px;margin:0 auto}.topbar{display:flex;align-items:center;justify-content:space-between;gap:15px;margin-bottom:25px}.eyebrow{font-size:10px;letter-spacing:1.5px;font-weight:700;color:#849188;margin:0 0 6px}.topbar h1{font-size:27px;margin:0;letter-spacing:-.7px}.top-actions{display:flex;align-items:center;gap:14px}.today{font-size:12px;color:var(--muted)}
+.btn{border:0;border-radius:8px;padding:11px 15px;font-weight:600;font-size:13px}.btn-primary{background:var(--green);color:white}.btn-primary:hover{background:#105637}.btn-light{background:white;border:1px solid var(--line);color:#45554b}.btn-danger{background:#a83e35;color:white}.text-button{background:transparent;color:var(--green);font-size:12px;font-weight:700}
+.view{display:none}.view.active{display:block}.metric-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:15px;margin-bottom:18px}.metric-card,.panel{background:var(--white);border:1px solid var(--line);border-radius:13px;box-shadow:0 3px 16px #17251e08}.metric-card{padding:20px;display:flex;flex-direction:column;gap:10px}.metric-card span{font-size:12px;color:var(--muted)}.metric-card strong{font-size:25px;letter-spacing:-.8px}.metric-card small{font-size:10px;color:#98a39c}
+.panel{padding:22px;margin-bottom:18px}.panel-heading,.modal-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}.panel h2,.modal h2{font-size:17px;margin:0}.two-column{display:grid;grid-template-columns:1.4fr 1fr;gap:18px}.split-stat{display:grid;gap:20px;padding:8px 0}.split-stat>div{display:grid;grid-template-columns:1fr auto;gap:8px}.split-stat span{font-size:12px;color:var(--muted)}.split-stat strong{font-size:13px}.bar{grid-column:1/3;background:#f1e9e7;height:7px;border-radius:20px;overflow:hidden}.bar i{display:block;height:100%;width:20%;background:#d59b6a;border-radius:20px}.bar.green{background:#e7f1ea}.bar.green i{background:#36996a;width:80%}.hint{font-size:11px;color:var(--muted);line-height:1.6;margin:17px 0 0}
+.table-wrap{width:100%;overflow:auto}table{border-collapse:collapse;width:100%;min-width:600px}th,td{padding:13px 10px;border-bottom:1px solid #edf1ee;text-align:left;font-size:12px}th{font-size:10px;color:#7d8b82;font-weight:700}td{color:#39473f}.status{display:inline-block;border-radius:20px;padding:5px 8px;background:#edf5ef;color:#286b47;font-size:10px}.status.danger{background:#fff0ed;color:#a33d32}.empty-state{padding:18px 0;color:#89958d;font-size:12px}
+.collection-row{display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid #edf1ee}.collection-info{flex:1;display:grid;gap:4px}.collection-info strong{font-size:12px}.collection-info small{font-size:10px;color:var(--muted)}.collection-amount{font-size:12px;font-weight:700}.wa-link{font-size:11px;color:#16804d;text-decoration:none;font-weight:700;white-space:nowrap}.wa-link:hover{text-decoration:underline}
+.form-panel{max-width:650px}.form-panel form,.modal form{display:grid;gap:13px}label{display:grid;gap:7px;font-size:12px;font-weight:600;color:#46554b}input,select,textarea{width:100%;border:1px solid #dfe7e1;border-radius:8px;padding:11px 12px;background:#fff;color:var(--ink);outline:none;font-size:13px}input:focus,select:focus,textarea:focus{border-color:#58a77c;box-shadow:0 0 0 3px #58a77c18}textarea{resize:vertical}.calculation-preview{padding:13px;border-radius:8px;background:var(--green-light);font-size:12px;line-height:1.7;color:#245a3d}.full{width:100%}
+.modal{border:0;border-radius:14px;padding:25px;width:min(510px,calc(100% - 28px));max-height:90vh;overflow:auto;box-shadow:0 20px 70px #0003}.modal::backdrop{background:#102018a8}.modal-heading{margin-bottom:20px}.close-btn{border:0;border-radius:7px;background:#f0f3f1;font-size:23px;width:32px;height:32px;color:#536258}.notice{padding:12px 15px;border-radius:8px;margin-bottom:15px;font-size:12px}.notice.success{background:#eaf5ee;color:#216a43}.notice.error{background:#fff0ed;color:#a33d32}.hidden{display:none}
+.audit-entry{padding:11px 0;border-bottom:1px solid var(--line);font-size:11px;line-height:1.5}.audit-entry strong{display:block;font-size:12px}.audit-entry small{color:var(--muted)}
+@media(max-width:1000px){.metric-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.two-column{grid-template-columns:1fr}}
+@media(max-width:680px){.app-shell{display:block}.sidebar{width:100%;padding:12px;display:block}.brand{margin:0 8px 12px;font-size:23px}.brand small{display:inline;margin-left:8px;font-size:8px}.sidebar nav{display:flex;overflow-x:auto;gap:5px}.nav-link{padding:10px;white-space:nowrap;font-size:11px;gap:7px}.sidebar-foot{display:none}.main-content{padding:20px 12px}.topbar{align-items:flex-start;flex-direction:column}.topbar h1{font-size:23px}.top-actions{width:100%;justify-content:space-between}.metric-grid{gap:9px}.metric-card{padding:14px}.metric-card strong{font-size:19px}.metric-card span{font-size:10px}.metric-card small{font-size:9px}.panel{padding:15px}.collection-row{flex-wrap:wrap}.collection-info{min-width:55%}.collection-amount{margin-left:auto}.wa-link{margin-left:auto}}
+
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">MP<span>.</span><small>MICROPRÉSTAMOS</small></div>
+      <nav>
+        <button class="nav-link active" data-view="dashboard">▦ <span>Resumen</span></button>
+        <button class="nav-link" data-view="clients">♙ <span>Clientes</span></button>
+        <button class="nav-link" data-view="loans">▤ <span>Préstamos</span></button>
+        <button class="nav-link" data-view="payments">＄ <span>Registrar pago</span></button>
+        <button class="nav-link" data-view="collections">◷ <span>Cobros del día</span></button>
+        <button class="nav-link" data-view="overdue">⚠ <span>En mora</span></button>
+        <button class="nav-link" data-view="settings">⚙ <span>Auditoría y ajustes</span></button>
+      </nav>
+      <div class="sidebar-foot">Sistema de administración<br><span>Versión inicial · 1.0</span></div>
+    </aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <div><p class="eyebrow">GESTIÓN FINANCIERA</p><h1 id="page-title">Resumen general</h1></div>
+        <div class="top-actions"><span class="today" id="today-label"></span><button class="btn btn-light" id="export-btn">↓ Exportar datos</button></div>
+      </header>
+      <div id="notice" class="notice hidden" role="status"></div>
+
+      <section class="view active" id="view-dashboard">
+        <div class="metric-grid">
+          <article class="metric-card"><span>Capital en la calle</span><strong id="metric-capital">$0.00</strong><small>Principal de préstamos activos</small></article>
+          <article class="metric-card"><span>Caja disponible</span><strong id="metric-cash">$0.00</strong><small>Dinero disponible para prestar</small></article>
+          <article class="metric-card"><span>Utilidades generadas</span><strong id="metric-profit">$0.00</strong><small>Interés efectivamente cobrado</small></article>
+          <article class="metric-card"><span>Disponible para retiro</span><strong id="metric-owner">$0.00</strong><small>20% del interés cobrado</small></article>
+        </div>
+        <div class="two-column">
+          <article class="panel"><div class="panel-heading"><div><p class="eyebrow">ACTIVIDAD</p><h2>Próximos cobros</h2></div><button class="text-button" data-goto="collections">Ver todos →</button></div><div id="dashboard-collections" class="empty-state">No hay cobros pendientes.</div></article>
+          <article class="panel"><div class="panel-heading"><div><p class="eyebrow">DISTRIBUCIÓN</p><h2>Intereses cobrados</h2></div></div><div class="split-stat"><div><span>Retiro del dueño</span><strong id="split-owner">$0.00</strong><div class="bar"><i id="bar-owner"></i></div></div><div><span>Reinversión</span><strong id="split-reinvest">$0.00</strong><div class="bar green"><i id="bar-reinvest"></i></div></div></div><p class="hint">Cada pago distribuye el interés recibido: 20% reservado para retiro y 80% para reinversión.</p></article>
+        </div>
+        <article class="panel"><div class="panel-heading"><div><p class="eyebrow">RESUMEN</p><h2>Últimos préstamos</h2></div><button class="btn btn-primary" data-goto="loans">+ Nuevo préstamo</button></div><div class="table-wrap"><table><thead><tr><th>Cliente</th><th>Desembolso</th><th>Principal</th><th>Total</th><th>Estado</th></tr></thead><tbody id="dashboard-loans"></tbody></table></div></article>
+      </section>
+
+      <section class="view" id="view-clients">
+        <article class="panel"><div class="panel-heading"><div><p class="eyebrow">DIRECTORIO</p><h2>Clientes registrados</h2></div><button class="btn btn-primary" id="new-client-btn">+ Nuevo cliente</button></div><div class="table-wrap"><table><thead><tr><th>Nombre</th><th>WhatsApp</th><th>Empresa</th><th>Límite</th><th>Estado</th></tr></thead><tbody id="clients-table"></tbody></table></div></article>
+      </section>
+
+      <section class="view" id="view-loans">
+        <article class="panel"><div class="panel-heading"><div><p class="eyebrow">CARTERA</p><h2>Préstamos</h2></div><button class="btn btn-primary" id="new-loan-btn">+ Crear préstamo</button></div><div class="table-wrap"><table><thead><tr><th>Cliente</th><th>Fecha</th><th>Principal</th><th>Tasa</th><th>Total</th><th>Cuotas</th><th>Estado</th></tr></thead><tbody id="loans-table"></tbody></table></div></article>
+      </section>
+
+      <section class="view" id="view-payments">
+        <article class="panel form-panel"><p class="eyebrow">ENTRADA DE DINERO</p><h2>Registrar un pago</h2><form id="payment-form"><label>Cuota pendiente<select id="payment-installment" required></select></label><label>Monto recibido ($)<input id="payment-amount" type="number" min="0.01" step="0.01" required></label><label>Método de pago<select id="payment-method"><option value="EFECTIVO">Efectivo</option><option value="TRANSFERENCIA">Transferencia</option></select></label><button class="btn btn-primary">Guardar pago</button></form><p class="hint">El sistema aplica primero el pago al interés pendiente de la cuota y luego al capital. No permite abonos superiores al saldo pendiente.</p></article>
+      </section>
+
+      <section class="view" id="view-collections">
+        <article class="panel"><div class="panel-heading"><div><p class="eyebrow">SEGUIMIENTO</p><h2>Cobros del día</h2></div></div><div id="today-collections" class="empty-state">No hay cobros para hoy.</div></article>
+      </section>
+
+      <section class="view" id="view-overdue">
+        <article class="panel"><div class="panel-heading"><div><p class="eyebrow">SEGUIMIENTO</p><h2>Cuotas vencidas</h2></div></div><div id="overdue-collections" class="empty-state">No hay cuotas vencidas.</div></article>
+      </section>
+
+      <section class="view" id="view-settings">
+        <div class="two-column">
+          <article class="panel form-panel"><p class="eyebrow">CONTROL CONTABLE</p><h2>Ajuste manual excepcional</h2><p class="hint">Los ajustes cambian la caja disponible y siempre requieren una nota de auditoría.</p><form id="adjustment-form"><label>Ajuste de caja ($)<input id="adjustment-amount" type="number" step="0.01" required placeholder="Ej. 25.00 o -10.00"></label><label>Motivo obligatorio<textarea id="adjustment-note" required minlength="12" rows="4" placeholder="Explica por qué es necesario el ajuste..."></textarea></label><button class="btn btn-danger">Registrar ajuste</button></form></article>
+          <article class="panel"><p class="eyebrow">HISTORIAL</p><h2>Registro de auditoría</h2><div id="audit-list" class="empty-state">No hay ajustes registrados.</div></article>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <dialog id="client-dialog" class="modal">
+    <form id="client-form" method="dialog">
+      <div class="modal-heading"><div><p class="eyebrow">DIRECTORIO</p><h2>Nuevo cliente</h2></div><button type="button" class="close-btn" data-close="client-dialog">×</button></div>
+      <label>Nombre completo<input id="client-name" required maxlength="120"></label>
+      <label>WhatsApp internacional, solo números<input id="client-phone" required pattern="[0-9]{8,15}" placeholder="50760000000"></label>
+      <label>Empresa de trabajo<input id="client-company" maxlength="120"></label>
+      <label>Cédula de identidad<input id="client-id-number" maxlength="40"></label>
+      <label>Enlace de ubicación (opcional)<input id="client-gps" type="url" placeholder="https://maps.google.com/..."></label>
+      <label>Referencias autorizadas (opcional)<textarea id="client-references" rows="2" placeholder="Solo contactos que hayan autorizado ser referencia"></textarea></label>
+      <button class="btn btn-primary full">Guardar cliente</button>
+    </form>
+  </dialog>
+
+  <dialog id="loan-dialog" class="modal">
+    <form id="loan-form" method="dialog">
+      <div class="modal-heading"><div><p class="eyebrow">NUEVO DESEMBOLSO</p><h2>Crear préstamo</h2></div><button type="button" class="close-btn" data-close="loan-dialog">×</button></div>
+      <label>Cliente<select id="loan-client" required></select></label>
+      <label>Monto a desembolsar ($)<input id="loan-amount" type="number" min="0.01" step="0.01" required></label>
+      <label>Modalidad<select id="loan-type"><option value="CUOTAS">Pago por cuotas</option><option value="PAGO_INMEDIATO">Pago inmediato (una quincena)</option></select></label>
+      <label>Número de quincenas<input id="loan-count" type="number" min="1" max="24" value="2"></label>
+      <div class="calculation-preview" id="loan-preview">La tasa y el total se calcularán automáticamente.</div>
+      <button class="btn btn-primary full">Confirmar préstamo</button>
+    </form>
+  </dialog>
+
+  <script>
+'use strict';
+
+/*
+ * MicroPréstamos — versión frontend sin servidor.
+ * Los datos se guardan en localStorage del navegador.
+ * No usar esta versión como sistema financiero de producción sin backend,
+ * autenticación real, controles de acceso y base de datos segura.
+ */
+const STORE_KEY = 'microprestamos_v1';
+const $ = (id) => document.getElementById(id);
+const money = (cents) => new Intl.NumberFormat('es-PA',{style:'currency',currency:'USD'}).format((cents||0)/100);
+const toCents = (value) => Math.round(Number(value)*100);
+const uid = () => (crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random()}`);
+const todayISO = () => { const d=new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; };
+
+function freshState(){
+  return {cash:100000,clients:[],loans:[],installments:[],payments:[],audit:[],createdAt:new Date().toISOString()};
+}
+function loadState(){
+  try { const saved=JSON.parse(localStorage.getItem(STORE_KEY)); return saved && typeof saved==='object' ? {...freshState(),...saved} : freshState(); }
+  catch { return freshState(); }
+}
+let state=loadState();
+function save(){localStorage.setItem(STORE_KEY,JSON.stringify(state));}
+function notify(message,type='success'){
+  const box=$('notice'); box.textContent=message; box.className=`notice ${type}`;
+  window.clearTimeout(notify.timer); notify.timer=window.setTimeout(()=>box.classList.add('hidden'),4500);
+}
+function rateFor(type,amountCents){
+  const amount=amountCents/100;
+  if(type==='PAGO_INMEDIATO') return 2000;
+  if(amount<40) return 2500;
+  if(amount>=40 && amount<=60) return 2000;
+  if(amount>=70) return 1500;
+  throw new Error('La matriz de tasas no define montos mayores de $60 y menores de $70. Ajusta la regla antes de continuar.');
+}
+function nextFortnight(date){
+  const d=new Date(date); d.setHours(12,0,0,0);
+  const last=new Date(d.getFullYear(),d.getMonth()+1,0).getDate();
+  if(d.getDate()<15)d.setDate(15);
+  else if(d.getDate()<last)d.setDate(last);
+  else{d.setDate(15);d.setMonth(d.getMonth()+1);}
+  return d;
+}
+function buildSchedule(principal,total,count,startDate){
+  if(!Number.isInteger(count)||count<1||count>24)throw new Error('El número de cuotas debe estar entre 1 y 24.');
+  const interest=total-principal;
+  const split=(amount,n)=>Array.from({length:n},(_,i)=>Math.floor(amount/n)+(i<amount%n?1:0));
+  const principals=split(principal,count),interests=split(interest,count);
+  let due=nextFortnight(startDate);
+  return Array.from({length:count},(_,i)=>{
+    if(i>0)due=nextFortnight(due);
+    return {number:i+1,principalDue:principals[i],interestDue:interests[i],amount:principals[i]+interests[i],paidAmount:0,dueDate:due.toISOString(),status:'PENDIENTE'};
+  });
+}
+function clientById(id){return state.clients.find(c=>c.id===id);}
+function installmentBalance(q){return q.amount-q.paidAmount;}
+function activeLoan(loan){return loan.status==='ACTIVO'||loan.status==='EN_ATRASO';}
+function interestCollected(){return state.payments.reduce((sum,p)=>sum+p.interestPart,0);}
+function ownerShare(){return state.payments.reduce((sum,p)=>sum+p.ownerPart,0);}
+function reinvestShare(){return state.payments.reduce((sum,p)=>sum+p.reinvestPart,0);}
+function updateLoanStatuses(){
+  state.loans.forEach(loan=>{
+    const qs=state.installments.filter(q=>q.loanId===loan.id);
+    if(qs.length&&qs.every(q=>q.status==='PAGADO'))loan.status='COMPLETADO';
+    else if(qs.some(q=>q.status!=='PAGADO'&&new Date(q.dueDate)<new Date(new Date().setHours(0,0,0,0))))loan.status='EN_ATRASO';
+    else loan.status='ACTIVO';
+  });
+  state.clients.forEach(c=>{
+    const late=state.installments.some(q=>q.status!=='PAGADO'&&new Date(q.dueDate)<new Date(new Date().setHours(0,0,0,0))&&state.loans.some(l=>l.id===q.loanId&&l.clientId===c.id));
+    if(c.status!=='BLOQUEADO')c.status=late?'EN_MORA':'ACTIVO';
+  });
+}
+function go(view){
+  document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active',v.id===`view-${view}`));
+  document.querySelectorAll('.nav-link').forEach(b=>b.classList.toggle('active',b.dataset.view===view));
+  const names={dashboard:'Resumen general',clients:'Clientes',loans:'Préstamos',payments:'Registrar pago',collections:'Cobros del día',overdue:'Clientes en mora',settings:'Auditoría y ajustes'};
+  $('page-title').textContent=names[view]||'MicroPréstamos';
+  render();
+}
+function render(){
+  updateLoanStatuses(); save();
+  const capital=state.loans.filter(activeLoan).reduce((s,l)=>s+l.principal,0);
+  $('metric-capital').textContent=money(capital);
+  $('metric-cash').textContent=money(state.cash);
+  $('metric-profit').textContent=money(interestCollected());
+  $('metric-owner').textContent=money(ownerShare());
+  $('split-owner').textContent=money(ownerShare());
+  $('split-reinvest').textContent=money(reinvestShare());
+  $('bar-owner').style.width=interestCollected()?`${ownerShare()/interestCollected()*100}%`:'0%';
+  $('bar-reinvest').style.width=interestCollected()?`${reinvestShare()/interestCollected()*100}%`:'0%';
+  renderClients();renderLoans();renderCollections();renderPayments();renderAudit();renderDashboard();
+}
+function renderClients(){
+  $('clients-table').innerHTML=state.clients.length?state.clients.map(c=>`<tr><td>${esc(c.name)}</td><td>${esc(c.phone)}</td><td>${esc(c.company||'—')}</td><td>${money(c.creditLimit)}</td><td>${statusTag(c.status)}</td></tr>`).join(''):'<tr><td colspan="5">Todavía no hay clientes registrados.</td></tr>';
+  $('loan-client').innerHTML=state.clients.filter(c=>c.status==='ACTIVO').map(c=>`<option value="${c.id}">${esc(c.name)} · Límite ${money(c.creditLimit)}</option>`).join('');
+}
+function renderLoans(){
+  const rows=state.loans.slice().sort((a,b)=>b.date.localeCompare(a.date));
+  const html=rows.map(l=>`<tr><td>${esc(clientById(l.clientId)?.name||'Cliente')}</td><td>${formatDate(l.date)}</td><td>${money(l.principal)}</td><td>${(l.rateBps/100).toFixed(2)}%</td><td>${money(l.total)}</td><td>${l.count}</td><td>${statusTag(l.status)}</td></tr>`).join('');
+  $('loans-table').innerHTML=html||'<tr><td colspan="7">No hay préstamos registrados.</td></tr>';
+}
+function statusTag(s){return `<span class="status ${s==='EN_MORA'||s==='EN_ATRASO'?'danger':''}">${esc(s)}</span>`;}
+function formatDate(d){return new Date(d).toLocaleDateString('es-PA',{day:'2-digit',month:'short',year:'numeric'});}
+function esc(value){return String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function collectionMarkup(q){
+  const loan=state.loans.find(l=>l.id===q.loanId),client=clientById(loan?.clientId);
+  if(!client)return '';
+  const balance=installmentBalance(q),date=formatDate(q.dueDate);
+  const msg=q.status==='VENCIDO'||new Date(q.dueDate)<new Date(new Date().setHours(0,0,0,0))
+    ?`Hola ${client.name}, te contactamos para recordarte que tienes una cuota vencida por ${money(balance)} con fecha ${date}. Por favor, comunícate con nosotros para revisar el estado del pago.`
+    :`Hola ${client.name}, te recordamos que tienes una cuota por ${money(balance)} con vencimiento ${date}. Si ya realizaste el pago, puedes ignorar este mensaje. Gracias.`;
+  return `<div class="collection-row"><div class="collection-info"><strong>${esc(client.name)} · Cuota ${q.number}</strong><small>Vence: ${date} · Saldo: ${money(balance)}</small></div><span class="collection-amount">${money(balance)}</span><a class="wa-link" href="https://wa.me/${encodeURIComponent(client.phone)}?text=${encodeURIComponent(msg)}" target="_blank" rel="noopener noreferrer">WhatsApp ↗</a></div>`;
+}
+function renderCollections(){
+  const today=todayISO();
+  const todays=state.installments.filter(q=>q.status!=='PAGADO'&&q.dueDate.slice(0,10)===today);
+  const overdue=state.installments.filter(q=>q.status!=='PAGADO'&&q.dueDate.slice(0,10)<today);
+  $('today-collections').innerHTML=todays.map(collectionMarkup).join('')||'<div class="empty-state">No hay cobros para hoy.</div>';
+  $('dashboard-collections').innerHTML=todays.slice(0,5).map(collectionMarkup).join('')||'<div class="empty-state">No hay cobros pendientes para hoy.</div>';
+  $('overdue-collections').innerHTML=overdue.map(collectionMarkup).join('')||'<div class="empty-state">No hay cuotas vencidas.</div>';
+}
+function renderPayments(){
+  const pending=state.installments.filter(q=>q.status!=='PAGADO');
+  $('payment-installment').innerHTML=pending.map(q=>{
+    const l=state.loans.find(x=>x.id===q.loanId),c=clientById(l?.clientId);
+    return `<option value="${q.id}">${esc(c?.name||'Cliente')} · Cuota ${q.number} · Saldo ${money(installmentBalance(q))} · ${formatDate(q.dueDate)}</option>`;
+  }).join('');
+  $('payment-installment').disabled=!pending.length;
+  $('payment-form').querySelector('button').disabled=!pending.length;
+}
+function renderAudit(){
+  $('audit-list').innerHTML=state.audit.slice().reverse().map(a=>`<div class="audit-entry"><strong>${esc(a.title)} · ${money(a.amount)}</strong>${esc(a.note)}<br><small>${new Date(a.date).toLocaleString('es-PA')}</small></div>`).join('')||'<div class="empty-state">No hay ajustes registrados.</div>';
+}
+function renderDashboard(){
+  $('dashboard-loans').innerHTML=state.loans.slice(-5).reverse().map(l=>`<tr><td>${esc(clientById(l.clientId)?.name||'Cliente')}</td><td>${formatDate(l.date)}</td><td>${money(l.principal)}</td><td>${money(l.total)}</td><td>${statusTag(l.status)}</td></tr>`).join('')||'<tr><td colspan="5">No hay préstamos registrados.</td></tr>';
+}
+function openDialog(id){if(id==='loan-dialog'&&!state.clients.length){notify('Primero debes registrar un cliente.','error');go('clients');return;}$(id).showModal();}
+function createClient(e){
+  e.preventDefault();
+  const name=$('client-name').value.trim(),phone=$('client-phone').value.trim();
+  if(!/^\d{8,15}$/.test(phone)){notify('El WhatsApp debe contener entre 8 y 15 dígitos, sin signos.','error');return;}
+  state.clients.push({id:uid(),name,phone,company:$('client-company').value.trim(),identity:$('client-id-number').value.trim(),gps:$('client-gps').value.trim(),references:$('client-references').value.trim(),creditLimit:10000,status:'ACTIVO',createdAt:new Date().toISOString()});
+  save();$('client-dialog').close();$('client-form').reset();render();notify('Cliente registrado correctamente.');
+}
+function previewLoan(){
+  const amount=Number($('loan-amount').value),type=$('loan-type').value,count=type==='PAGO_INMEDIATO'?1:Number($('loan-count').value||1);
+  $('loan-count').disabled=type==='PAGO_INMEDIATO';
+  if(!amount||amount<=0){$('loan-preview').textContent='La tasa y el total se calcularán automáticamente.';return;}
+  try{const principal=toCents(amount),rate=rateFor(type,principal),interest=Math.round(principal*rate/10000);$('loan-preview').innerHTML=`Tasa aplicada: <strong>${(rate/100).toFixed(2)}%</strong><br>Interés total: <strong>${money(interest)}</strong><br>Total a pagar: <strong>${money(principal+interest)}</strong><br>Cuotas: <strong>${count}</strong>`;}
+  catch(err){$('loan-preview').textContent=err.message;}
+}
+function createLoan(e){
+  e.preventDefault();
+  try{
+    const client=clientById($('loan-client').value),principal=toCents($('loan-amount').value),type=$('loan-type').value,count=type==='PAGO_INMEDIATO'?1:Number($('loan-count').value),rate=rateFor(type,principal);
+    if(!client)throw new Error('Selecciona un cliente.');
+    if(client.status!=='ACTIVO')throw new Error('El cliente no está activo.');
+    if(principal>client.creditLimit)throw new Error('El monto supera el límite de crédito del cliente.');
+    if(state.cash<principal)throw new Error('La caja disponible es insuficiente.');
+    const interest=Math.round(principal*rate/10000),total=principal+interest,date=new Date();
+    const loan={id:uid(),clientId:client.id,principal,type,rateBps:rate,interest,total,count,date:date.toISOString(),status:'ACTIVO'};
+    const schedule=buildSchedule(principal,total,count,date).map(q=>({...q,id:uid(),loanId:loan.id}));
+    state.cash-=principal;state.loans.push(loan);state.installments.push(...schedule);
+    save();$('loan-dialog').close();$('loan-form').reset();render();notify('Préstamo creado y calendario generado.');
+  }catch(err){notify(err.message,'error');}
+}
+function registerPayment(e){
+  e.preventDefault();
+  const q=state.installments.find(x=>x.id===$('payment-installment').value);
+  if(!q){notify('No hay una cuota pendiente seleccionada.','error');return;}
+  try{
+    const received=toCents($('payment-amount').value),balance=installmentBalance(q);
+    if(received<=0)throw new Error('El monto debe ser mayor que cero.');
+    if(received>balance)throw new Error('El abono supera el saldo pendiente de la cuota.');
+    const interestPaid=state.payments.filter(p=>p.installmentId===q.id).reduce((s,p)=>s+p.interestPart,0);
+    const interestOutstanding=q.interestDue-interestPaid;
+    const interestPart=Math.min(received,interestOutstanding),principalPart=received-interestPart;
+    const ownerPart=Math.ceil(interestPart*0.20),reinvestPart=interestPart-ownerPart;
+    const payment={id:uid(),installmentId:q.id,received,interestPart,principalPart,ownerPart,reinvestPart,method:$('payment-method').value,date:new Date().toISOString()};
+    q.paidAmount+=received;q.status=q.paidAmount===q.amount?'PAGADO':'PAGADO_PARCIAL';
+    // Capital recuperado + 80% del interés vuelven a la caja operativa.
+    // El 20% del interés queda separado como saldo reservable del dueño.
+    state.cash+=principalPart+reinvestPart;state.payments.push(payment);
+    save();$('payment-form').reset();render();notify(`Pago registrado. Capital: ${money(principalPart)} · Interés: ${money(interestPart)}.`);
+  }catch(err){notify(err.message,'error');}
+}
+function createAdjustment(e){
+  e.preventDefault();
+  const amount=Number($('adjustment-amount').value),note=$('adjustment-note').value.trim();
+  if(!Number.isFinite(amount)||amount===0){notify('El ajuste debe ser distinto de cero.','error');return;}
+  if(note.length<12){notify('Escribe una nota de auditoría de al menos 12 caracteres.','error');return;}
+  const cents=toCents(Math.abs(amount))*(amount<0?-1:1);
+  if(state.cash+cents<0){notify('El ajuste dejaría la caja en negativo.','error');return;}
+  state.cash+=cents;state.audit.push({id:uid(),title:'Ajuste manual de caja',amount:cents,note,date:new Date().toISOString()});
+  save();$('adjustment-form').reset();render();notify('Ajuste registrado en el historial de auditoría.');
+}
+function exportData(){
+  const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=`microprestamos-respaldo-${todayISO()}.json`;a.click();URL.revokeObjectURL(url);
+}
+function init(){
+  $('today-label').textContent=new Date().toLocaleDateString('es-PA',{weekday:'short',day:'numeric',month:'long',year:'numeric'});
+  document.querySelectorAll('.nav-link').forEach(b=>b.addEventListener('click',()=>go(b.dataset.view)));
+  document.querySelectorAll('[data-goto]').forEach(b=>b.addEventListener('click',()=>go(b.dataset.goto)));
+  $('new-client-btn').addEventListener('click',()=>openDialog('client-dialog'));
+  $('new-loan-btn').addEventListener('click',()=>openDialog('loan-dialog'));
+  document.querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click',()=>$(b.dataset.close).close()));
+  $('client-form').addEventListener('submit',createClient);
+  $('loan-form').addEventListener('submit',createLoan);
+  $('payment-form').addEventListener('submit',registerPayment);
+  $('adjustment-form').addEventListener('submit',createAdjustment);
+  ['loan-amount','loan-type','loan-count'].forEach(id=>$(id).addEventListener('input',previewLoan));
+  $('loan-type').addEventListener('change',previewLoan);
+  $('export-btn').addEventListener('click',exportData);
+  render();
+}
+document.addEventListener('DOMContentLoaded',init);
+
+  </script>
+</body>
+</html>
